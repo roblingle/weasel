@@ -28,10 +28,11 @@ class Evolver < String
   
   # Be fruitful! Multiply! Have offspring that are slightly 
   # mutated versions of yourself, who will be imperceptibly 
-  # more or less fit their predecessor! 
+  # more or less fit than you were! 
   def procreate!( offspring = @options[:offspring] )
     @children = []
     offspring.times{ @children << mutant_offspring }
+    @children.reject!{ |child| child.to_s == to_s } unless @options[:allow_clones]
     @children
   end
   
@@ -40,7 +41,7 @@ class Evolver < String
     @children.max{ |this,that| this.fitness <=> that.fitness }
   end
   
-  # Measure fitness relative to the goal.
+  # Measure fitness relative to the target string.
   # 0 represents ideal fitness- i.e. no unfitness. 
   def fitness
     0 - length_penalty - spelling_penalty
@@ -48,8 +49,9 @@ class Evolver < String
   
   protected
   
+    # Create a mutant version of the instance.
     def mutant_offspring
-      offspring = Evolver.new(self.to_s,@options)
+      offspring = Evolver.new(self.to_s, @options)
       offspring.parent = self
       offspring.generation = self.generation+1
       
@@ -59,14 +61,17 @@ class Evolver < String
     
     # Change the length of the string. With a length_mutation of 3,
     # the size of the string may be changed by -3 to +3 characters.
+    # When growing, random characters are appended, when shrinking,
+    # positions are dropped off of the end.
     def mutate_length
-      length_change = random_between_plus_and_minus(@options[:length_mutations])
+      original = self.to_s
+      length_change = rand_between_plus_and_minus(@options[:length_mutations])
       if length_change > 0
-        self << length_change.times.collect{|i| random_char}.join
+        length_change.times{ self << random_char}
       elsif length_change < 0
-        length_change = [length_change.abs,size].min
-        #puts "shrinking by #{length_change} from #{size}"
-        slice!(0..size-length_change-1)
+        range = size + length_change
+        range = 0 if range < 0 # not letting strings become empty
+        slice!(0,range)
       end
       self
     end
@@ -77,10 +82,7 @@ class Evolver < String
     # position to a random character.
     def mutate_spelling
       spelling_changes = rand(@options[:spelling_mutations]+1)
-      spelling_changes.times do
-        puts self
-        self[rand(size)] = random_char
-      end
+      spelling_changes.times{ self[rand(size)] = random_char }
       self
     end
   
@@ -111,11 +113,12 @@ class Evolver < String
     # returns a random ascii character between SPACE and ~
     def random_char
       lower=32
-      upper=127
-      (rand(upper-lower) + lower).chr
+      upper=126
+      (rand(upper-lower+1) + lower).chr
     end
     
-    def random_between_plus_and_minus(number)
+    # Generates a random integer between +/- the specified number 
+    def rand_between_plus_and_minus(number)
       rand(number*2) - number
     end
 
