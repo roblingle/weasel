@@ -1,0 +1,17 @@
+Demonstration of "random mutation 
+plus selection" based on Richard 
+Dawkins' "weasel" program from 
+"The Blind Watchmaker":http://www.youtube.com/watch?v=5sUQIpFajsg.
+
+*To run*
+ruby weasel_cli.rb
+
+To test different scenarios, edit 
+the options hash in weasel_cli.rb
+The default options encourage good
+spelling over length of the string.
+
+
+*Coming soon*
+# A Shoes front end
+# Evolver racing
