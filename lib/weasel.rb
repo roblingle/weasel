@@ -5,8 +5,8 @@ class Weasel
   attr_accessor :selected,:random
   
   def initialize(initial = 'protozoa', options = {})
-    @selected = Evolver.new(initial)
-    @random   = Evolver.new(initial)
+    @selected = Evolver.new(initial, options)
+    @random   = Evolver.new(initial, options)
   end
   
   # The 'selected' and 'random' evolvers both create random offspring.
@@ -18,7 +18,7 @@ class Weasel
     # select the fittest mutant offspring
     @selected = @selected.select_fittest
     # select a random mutant offspring
-    @random   = @selected.children[rand(@selected.children.size)]
+    @random   = @random.children[rand(@selected.children.size)]
   end
   
 end
