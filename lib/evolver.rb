@@ -2,33 +2,24 @@ class Evolver < String
   attr_accessor :parent, :generation, :children, :options
   
   def initialize( initial, options = {} )
-    # took 3862 generations
-    #@options = {
-    #  :target               => "Methinks it is like a weasel",
-    #  :offspring            => 100,
-    #  :length_penalty       => 100,
-    #  :spelling_multiplier  => 1,
-    #  :spelling_mutations   => 10,
-    #  :length_mutations     => 3
-    #}.merge(options)
-    
-    # Took 817 generations
+
     @options = {
       :target               => "Methinks it is like a weasel",
       :offspring            => 100,
       :length_penalty       => 25,
       :spelling_multiplier  => 1,
-      :spelling_mutations   => 3,
-      :length_mutations     => 3
+      :spelling_mutations   => 2,
+      :length_mutations     => 2,
+      :allow_clones         => true
     }.merge(options)
     
     # must have some mutations allowed:
-    #if @options[:spelling_mutations].nil? or @options[:spelling_mutations] < 2
-    #  @options[:spelling_mutations] = 2 # rand(2) returns 0 or 1
-    #end
-    #if @options[:length_mutations].nil? or @options[:length_mutations] < 2
-    #  @options[:length_mutations] = 2
-    #end
+    if @options[:spelling_mutations].nil? or @options[:spelling_mutations] < 2
+      @options[:spelling_mutations] = 2 # rand(2) returns 0 or 1
+    end
+    if @options[:length_mutations].nil? or @options[:length_mutations] < 2
+      @options[:length_mutations] = 2
+    end
     
     @generation = 1
     @children   = []
